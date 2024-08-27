@@ -3,7 +3,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-from ejercicio import Ejercicio
+from prueba import Ejercicio
 from dibujar_mediapipe import DibujarMediaPipe
 
 
@@ -15,7 +15,7 @@ def esta_de_frente(landmarks) -> bool:
     :param landmarks: Los puntos de referencia proporcionados por MediaPipe.
     :return: True si el cuerpo está de frente, False si está de lado.
     """
-    tolerancia = 0.12
+    tolerancia = 0.15
 
     left_shoulder_z = landmarks[11].z
     right_shoulder_z = landmarks[12].z
@@ -63,6 +63,20 @@ curl_bicep = Ejercicio(
     tolerancia=10
 )
 
+elevacion_lateral = Ejercicio(
+    nombre="Elevaciones Laterales",
+    angulos_objetivo={
+        (14, 12, 24): (20.0, 70.0),  # Ángulo para el brazo izquierdo
+        (13, 11, 23): (20.0, 70.0),   # Ángulo para el brazo derecho
+    },
+    tolerancia=5,
+    angulos_adicionales={
+        (12, 14, 16): 30.0,
+        (11, 13, 15): 30.0,
+    },
+    tolerancia_adicional=50.0
+)
+
 # Instancia de la clase DibujarMediaPipe
 dibujar_mediapipe = DibujarMediaPipe(
     font=cv2.FONT_HERSHEY_SIMPLEX,
@@ -105,7 +119,7 @@ with mp_pose.Pose(
                 dibujar_mediapipe.draw_landmarks(frame, results.pose_landmarks)
 
                 # Verificar el ejercicio con múltiples ángulos
-                if curl_bicep.verificar_ejercicio(results.pose_landmarks.landmark):
+                if elevacion_lateral.verificar_ejercicio(results.pose_landmarks.landmark):
                     counter += 1
                     print(f'Repeticiones: {counter}')
 
@@ -118,7 +132,7 @@ with mp_pose.Pose(
                     frame, "Por favor, coloquese de frente", (10, 30))
 
         stages_text = '\n'.join(
-            [f'{key}: {value}' for key, value in curl_bicep.stage.items()])
+            [f'{key}: {value}' for key, value in elevacion_lateral.stage.items()])
 
         # Mostrar el contador y el estado en el video con múltiples líneas para "Stages"
         dibujar_mediapipe.put_multiline_text(

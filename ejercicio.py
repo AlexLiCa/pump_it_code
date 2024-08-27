@@ -27,7 +27,7 @@ class Ejercicio:
         :param landmarks: Los puntos de referencia proporcionados por MediaPipe.
         :return: El ángulo calculado.
         """
-        start, mid, end = self.extraer_coordenadas(landmarks, puntos)
+        start, mid, end = self.extract_coordinates(landmarks, puntos)
         a = np.array(start)  # First
         b = np.array(mid)    # Mid
         c = np.array(end)    # End
@@ -64,7 +64,7 @@ class Ejercicio:
         return ejercicio_completado and all(stage == "up" for stage in self.stage.values())
 
     @staticmethod
-    def extraer_coordenadas(landmarks, indices: Tuple[int, int, int]) -> List[Tuple[float, float]]:
+    def extract_coordinates(landmarks, indices: Tuple[int, int, int]) -> List[Tuple[float, float]]:
         """
         Función auxiliar para extraer las coordenadas de los landmarks dados los índices.
 
